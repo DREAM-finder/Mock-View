@@ -20,7 +20,7 @@ export async function setSessionCookie(idToken: string) {
     maxAge: SESSION_DURATION,
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    path: "/",
+    path: "/app",
     sameSite: "lax",
   });
 }
@@ -37,12 +37,12 @@ export async function signUp(params: SignUpParams) {
         message: "User already exists. Please sign in.",
       };
 
-    // save user to db
+    // save user to db with only necessary fields
     await db.collection("users").doc(uid).set({
       name,
       email,
-      // profileURL,
-      // resumeURL,
+
+      createdAt: new Date().toISOString(),  // Add timestamp in ISO format
     });
 
     return {
@@ -72,28 +72,47 @@ export async function signIn(params: SignInParams) {
 
   try {
     const userRecord = await auth.getUserByEmail(email);
-    if (!userRecord)
+    if (!userRecord) {
       return {
         success: false,
         message: "User does not exist. Create an account.",
       };
+    }
 
     await setSessionCookie(idToken);
-  } catch (error: any) {
-    console.log("");
 
+    // Add success return statement
+    return {
+      success: true,
+      message: "Sign in successfully.",
+    };
+  } catch (error: unknown) {
+    console.log(error);
     return {
       success: false,
-      message: "Failed to log into account. Please try again.",
+      message: "Sign in failed.",
     };
   }
 }
 
 // Sign out user by clearing the session cookie
 export async function signOut() {
-  const cookieStore = await cookies();
+  try {
+    const cookieStore = await cookies();
+    cookieStore.delete("session");
 
-  cookieStore.delete("session");
+    // Correct success return statement
+    return {
+      success: true,
+      message: "Sign out successfully.",
+    };
+  } catch (error: unknown) {
+    console.log(error);
+    return {
+      success: false,
+      message: "Error signing out.",
+    };
+  }
 }
 
 // Get current user from session cookie

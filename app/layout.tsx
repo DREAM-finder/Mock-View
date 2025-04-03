@@ -1,16 +1,17 @@
+import { Toaster } from "sonner";
 import type { Metadata } from "next";
 import { Mona_Sans } from "next/font/google";
-import "./globals.css";
-import {Toaster} from "sonner";
 
-const MonaSans = Mona_Sans({
-  variable: "--font-Mona-sans",
+import "./globals.css";
+
+const monaSans = Mona_Sans({
+  variable: "--font-mona-sans",
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "PrepView",
-  description: "AI interview platform",
+  title: "PrepWise",
+  description: "An AI-powered platform for preparing for mock interviews",
 };
 
 export default function RootLayout({
@@ -19,15 +20,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-      // only dark theme will be used later
-    <html lang="en" className={"dark"}>
-      <body
-          // applied that font everywhere on website
-        className={`${MonaSans.className} antialiased pattern`}
-      >
+    <html lang="en" className="dark">
+      <body className={`${monaSans.className} antialiased pattern`}>
         {children}
 
-      <Toaster />
+        <Toaster />
       </body>
     </html>
   );
