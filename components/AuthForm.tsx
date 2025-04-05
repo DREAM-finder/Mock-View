@@ -13,6 +13,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
+import { setPersistence, browserSessionPersistence } from "firebase/auth";
 
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
@@ -69,11 +70,16 @@ const AuthForm = ({ type }: { type: FormType }) => {
       } else {
         const { email, password } = data;
 
+        await setPersistence(auth, browserSessionPersistence);
+
         const userCredential = await signInWithEmailAndPassword(
           auth,
           email,
           password
         );
+
+        console.log("Firebase Auth User:", auth.currentUser);
+
 
         const idToken = await userCredential.user.getIdToken();
         if (!idToken) {
@@ -102,7 +108,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
       <div className="flex flex-col gap-6 card py-14 px-10">
         <div className="flex flex-row gap-2 justify-center">
           <Image src="/logo.svg" alt="logo" height={32} width={38} />
-          <h2 className="text-primary-100">PrepWise</h2>
+          <h2 className="text-primary-100">MockView</h2>
         </div>
 
         <h3>Practice job interviews with AI</h3>
